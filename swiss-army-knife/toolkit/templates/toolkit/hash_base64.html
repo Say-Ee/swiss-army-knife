@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Hash & Base64 Tool</title>
+</head>
+<body>
+    <h1>Hash Generator</h1>
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="tool" value="hash">
+        <input type="text" name="hash_input" placeholder="Enter text">
+        <button type="submit">Generate Hash</button>
+    </form>
+    {% if result.md5 %}
+        <p>MD5: {{ result.md5 }}</p>
+        <p>SHA1: {{ result.sha1 }}</p>
+        <p>SHA256: {{ result.sha256 }}</p>
+    {% endif %}
+
+    <h1>Base64 Encoder/Decoder</h1>
+    <form method="post">
+        {% csrf_token %}
+        <input type="hidden" name="tool" value="base64">
+        <input type="text" name="base_input" placeholder="Enter text">
+        <select name="base_action">
+            <option value="encode">Encode</option>
+            <option value="decode">Decode</option>
+        </select>
+        <button type="submit">Submit</button>
+    </form>
+    {% if result.base64_result %}
+        <p>Result: {{ result.base64_result }}</p>
+    {% endif %}
+</body>
+</html>
