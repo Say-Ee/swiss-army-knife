@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Swiss Army Knife Toolkit</title>
+    <style>
+        body { font-family: sans-serif; max-width: 800px; margin: 20px auto; padding: 15px; }
+        .tool-section { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 5px; }
+        .tool-section h2 { margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 5px;}
+        label, input, select, button { margin-bottom: 10px; display: block; }
+        input[type="text"], select { width: 95%; padding: 8px; margin-bottom: 15px;}
+        button { padding: 10px 15px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 3px;}
+        button:hover { background-color: #0056b3;}
+        .error { color: red; margin-bottom: 15px; font-weight: bold; border: 1px solid red; padding: 10px; background-color: #ffebeb; }
+        .results { background-color: #f8f9fa; border: 1px solid #eee; padding: 10px; margin-top: 15px; border-radius: 3px; word-wrap: break-word; }
+        .results p, .results li { margin-bottom: 5px; }
+        hr { display: none; } /* Hide default hr if using sections */
+    </style>
+</head>
+<body>
+    <h1>Swiss Army Knife Toolkit</h1>
+
+    <!-- Display General Errors -->
+    {% if error_message %}
+        <p class="error">Error: {{ error_message }}</p>
+    {% endif %}
+
+    <!-- Hash Tool Section -->
+    <div class="tool-section">
+        <h2>Hash Generator</h2>
+        <form method="post">
+            {% csrf_token %}
+            <label for="hash-input">Text to Hash:</label>
+            <input type="text" id="hash-input" name="hash_input" placeholder="Enter text" value="{{ submitted_hash_input|default:'' }}">
+            <button type="submit" name="action" value="hash">Generate Hashes</button>
+        </form>
+        {% if show_hash_results and hash_results %}
+            <div class="results">
+                <strong>Results:</strong>
+                <p>MD5: <code>{{ hash_results.md5 }}</code></p>
+                <p>SHA1: <code>{{ hash_results.sha1 }}</code></p>
+                <p>SHA256: <code>{{ hash_results.sha256 }}</code></p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Base64 Tool Section -->
+    <div class="tool-section">
+        <h2>Base64 Encoder/Decoder</h2>
+        <form method="post">
+            {% csrf_token %}
+            <label for="base64-input">Text to Encode/Decode:</label>
+            <input type="text" id="base64-input" name="base64_input" placeholder="Enter text" value="{{ submitted_base64_input|default:'' }}">
+            <label for="base64-action">Action:</label>
+            <select name="base64_action" id="base64-action">
+                <option value="encode" {% if submitted_base64_action == 'encode' %}selected{% endif %}>Encode</option>
+                <option value="decode" {% if submitted_base64_action == 'decode' %}selected{% endif %}>Decode</option>
+            </select>
+            <button type="submit" name="action" value="base64">Process Base64</button>
+        </form>
+        {% if show_base64_results and base64_result is not None %}
+            <div class="results">
+                <strong>Result:</strong>
+                <p><code>{{ base64_result }}</code></p>
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- IP Geolocation Tool Section -->
+    <div class="tool-section">
+        <h2>IP Geolocation</h2>
+        <form method="post">
+            {% csrf_token %}
+            <label for="ip-geo-address">IP Address:</label>
+            <input type="text" id="ip-geo-address" name="ip_geo_address" placeholder="e.g., 8.8.8.8" value="{{ submitted_ip_geo_input|default:'' }}">
+            <button type="submit" name="action" value="geolocate">Get Geolocation</button>
+        </form>
+        {% if show_geo_results and geo_results %}
+             <div class="results">
+                <strong>Geolocation Information:</strong>
+                {% if geo_results.error %}
+                     <p>Could not retrieve geolocation: {{ geo_results.error }}</p>
+                {% else %}
+                    <p><strong>IP Address:</strong> {{ geo_results.ip | default:"N/A" }}</p>
+                    <p><strong>City:</strong> {{ geo_results.city | default:"N/A" }}</p>
+                    <p><strong>Region:</strong> {{ geo_results.region | default:"N/A" }}</p>
+                    <p><strong>Country:</strong> {{ geo_results.country | default:"N/A" }}</p>
+                    <p><strong>Coordinates:</strong> {{ geo_results.loc | default:"N/A" }}</p>
+                    <p><strong>ISP:</strong> {{ geo_results.org | default:"N/A" }}</p>
+                    <p><strong>Timezone:</strong> {{ geo_results.timezone | default:"N/A" }}</p>
+                     <!-- Adjust fields based on your actual get_ip_geolocation output -->
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+    <!-- Port Scanner Tool Section -->
+    <div class="tool-section">
+        <h2>Port Scanner</h2>
+        <form method="post">
+            {% csrf_token %}
+            <label for="port-scan-ip">IP Address or Hostname:</label>
+            <input type="text" id="port-scan-ip" name="port_scan_ip" placeholder="e.g., 8.8.8.8 or scanme.nmap.org" value="{{ submitted_port_scan_ip|default:'' }}">
+            <label for="port-scan-ports">Ports (comma-separated):</label>
+            <input type="text" id="port-scan-ports" name="port_scan_ports" placeholder="e.g., 80,443,22" value="{{ submitted_port_scan_ports|default:'' }}">
+            <button type="submit" name="action" value="scan_ports">Scan Ports</button>
+        </form>
+         {% if show_port_results and port_scan_results is not None %}
+             <div class="results">
+                <strong>Port Scan Results (for {{ submitted_port_scan_ip }}):</strong>
+                {% if port_scan_results %}
+                    <ul>
+                        {% for port in port_scan_results %}
+                            <li>Port {{ port }}: <strong style="color: green;">Open</strong></li>
+                        {% endfor %}
+                    </ul>
+                {% else %}
+                    <p>No open ports found in the scanned list.</p>
+                {% endif %}
+            </div>
+        {% endif %}
+    </div>
+
+</body>
+</html>
