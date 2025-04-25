@@ -2,33 +2,291 @@
 <html>
 <head>
     <title>Swiss Army Knife Toolkit</title>
+    <!-- Add Font Awesome CDN for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css" integrity="sha512-DTOQO9RWCH3ppGqcWaEA1BIZOC6xxalwEsw9c2QQeAIftl+Vegovlnee1c9QX4TctnWMn13TZye+giMm8e2LwA==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <style>
-        body { font-family: sans-serif; max-width: 800px; margin: 20px auto; padding: 15px; }
-        .tool-section { border: 1px solid #ccc; padding: 15px; margin-bottom: 20px; border-radius: 5px; }
-        .tool-section h2 { margin-top: 0; border-bottom: 1px solid #eee; padding-bottom: 5px;}
-        label, input, select, button { margin-bottom: 10px; display: block; }
-        input[type="text"], select { width: 95%; padding: 8px; margin-bottom: 15px;}
-        button { padding: 10px 15px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 3px;}
-        button:hover { background-color: #0056b3;}
-        .error { color: red; margin-bottom: 15px; font-weight: bold; border: 1px solid red; padding: 10px; background-color: #ffebeb; }
-        .results { background-color: #f8f9fa; border: 1px solid #eee; padding: 10px; margin-top: 15px; border-radius: 3px; word-wrap: break-word; }
-        .results p, .results li { margin-bottom: 5px; }
-        hr { display: none; } /* Hide default hr if using sections */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            max-width: 960px; /* Even wider for bigger cards */
+            margin: 50px auto; /* More top/bottom margin */
+            padding: 25px;
+            /* Slightly richer background */
+            background-color: #f0f4f8; /* Lighter, cool grey-blue */
+            color: #333d49; /* Slightly darker default text */
+            font-size: 16px;
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 60px; /* More space */
+            color: #1f2937; /* Darker heading */
+            font-weight: 600; /* Semi-bold */
+            font-size: 2.5em;
+        }
+
+        /* --- Card Styles (Bigger & Bolder) --- */
+        #tool-cards {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 45px; /* Increased gap significantly */
+            margin-bottom: 60px;
+        }
+
+        .tool-card {
+            border: 1px solid #e1e8f0; /* Border matching background */
+            border-radius: 12px; /* More rounded */
+            /* Significantly increased padding for bigger feel */
+            padding: 50px 40px;
+            text-align: center;
+            cursor: pointer;
+            background-color: #ffffff;
+            transition: transform 0.25s ease, box-shadow 0.3s ease, border-color 0.2s ease;
+            /* Deeper shadow */
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.09);
+            /* Ensure cards have a minimum height */
+            min-height: 220px; /* Adjust as needed */
+            display: flex; /* Use flexbox for internal alignment */
+            flex-direction: column; /* Stack icon, header, text vertically */
+            align-items: center; /* Center items horizontally */
+            justify-content: center; /* Center items vertically */
+        }
+
+        .tool-card:hover {
+            transform: translateY(-10px); /* More pronounced lift */
+            /* Stronger hover shadow */
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.13);
+             /* Change border color on hover */
+            border-color: #3b82f6; /* A nice blue accent */
+        }
+
+         /* Icon Styling */
+        .tool-card i.fa-solid {
+            font-size: 2.8em; /* Large icons */
+            margin-bottom: 25px; /* Space below icon */
+            color: #3b82f6; /* Blue accent color */
+            transition: color 0.25s ease;
+        }
+
+        .tool-card:hover i.fa-solid {
+            color: #1d4ed8; /* Darker blue on hover */
+        }
+
+
+        .tool-card h3 {
+            margin-top: 0;
+            margin-bottom: 15px;
+             /* Use the blue accent color */
+            color: #3b82f6;
+            font-weight: 600; /* Bolder header */
+            font-size: 1.6em;
+            transition: color 0.25s ease;
+        }
+
+         .tool-card:hover h3 {
+             color: #1d4ed8; /* Darker blue on hover */
+         }
+
+         .tool-card p {
+            font-size: 1.05em; /* Slightly larger description */
+            color: #6b7280; /* Muted grey */
+            margin-bottom: 0;
+            line-height: 1.6;
+            max-width: 90%; /* Prevent text stretching too wide */
+         }
+
+        /* --- Tool Section Styles (Matching updated cards) --- */
+        .tool-section {
+            border: 1px solid #e1e8f0;
+            padding: 40px; /* Generous padding */
+            margin-bottom: 40px;
+            border-radius: 12px; /* Match card radius */
+            display: none;
+            background-color: #ffffff;
+             box-shadow: 0 8px 20px rgba(0, 0, 0, 0.09); /* Match card shadow */
+        }
+
+        .tool-section.active-tool {
+            display: block;
+        }
+
+        .tool-section h2 {
+            margin-top: 0;
+            border-bottom: 1px solid #e1e8f0;
+            padding-bottom: 20px;
+            margin-bottom: 35px;
+            color: #1f2937;
+            font-weight: 600;
+            font-size: 2em;
+        }
+
+        /* --- General Element Styles --- */
+        label {
+             display: block;
+             margin-bottom: 10px; /* More space */
+             font-weight: 500;
+             color: #333d49;
+             font-size: 1.1em;
+        }
+
+        input[type="text"], select {
+            width: 100%;
+            padding: 14px 18px; /* Larger inputs */
+            margin-bottom: 25px;
+            border: 1px solid #cbd5e1; /* Slightly darker border */
+            border-radius: 6px; /* Match card rounding */
+            box-sizing: border-box;
+            background-color: #f8fafc; /* Very light input background */
+            color: #333d49;
+            font-size: 1em;
+            transition: border-color 0.2s ease, box-shadow 0.2s ease;
+        }
+        input[type="text"]:focus, select:focus {
+             border-color: #3b82f6; /* Use accent blue */
+             outline: 0;
+             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.2); /* Lighter blue glow */
+             background-color: #fff; /* White on focus */
+        }
+
+
+        button {
+            padding: 14px 28px; /* Larger buttons */
+            cursor: pointer;
+            background-color: #3b82f6; /* Accent blue */
+            color: white;
+            border: none; /* Remove border, rely on background */
+            border-radius: 6px;
+            font-size: 1.1em;
+            font-weight: 500;
+            margin-right: 12px;
+            transition: background-color 0.2s ease-in-out, transform 0.1s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        button:hover {
+            background-color: #1d4ed8; /* Darker blue */
+            transform: translateY(-1px); /* Subtle lift */
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+         button:active {
+             transform: translateY(0px); /* Click effect */
+             box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+         }
+         button:focus {
+             outline: 0;
+              box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.3); /* Focus ring */
+         }
+
+
+        #back-to-cards {
+             background-color: #6b7280; /* Grey */
+             border-color: #6b7280;
+             margin-bottom: 30px;
+             display: none;
+        }
+        #back-to-cards:hover {
+             background-color: #4b5563; /* Darker grey */
+             border-color: #4b5563;
+        }
+
+        .error {
+            color: #991b1b; /* Dark red */
+            background-color: #fee2e2; /* Light red */
+            border: 1px solid #fecaca; /* Reddish border */
+            padding: 18px 22px;
+            margin-bottom: 25px;
+            border-radius: 6px;
+            font-weight: 500;
+        }
+
+        .results {
+            background-color: #f8fafc; /* Consistent light background */
+            border: 1px solid #e2e8f0; /* Consistent light border */
+            padding: 30px; /* More padding */
+            margin-top: 30px;
+            border-radius: 6px;
+            word-wrap: break-word;
+            font-family: SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
+            font-size: 1em;
+        }
+         .results strong:first-child {
+             display: block;
+             margin-bottom: 20px;
+             font-family: inherit;
+             font-size: 1.3em;
+             font-weight: 600; /* Bolder results title */
+             color: #1f2937;
+         }
+
+        .results p, .results li {
+            margin-bottom: 12px;
+            line-height: 1.6;
+        }
+        .results code {
+             background-color: #e2e8f0; /* Slightly darker code bg */
+             padding: .3em .6em; /* More padding */
+             margin: 0;
+             font-size: 95%;
+             border-radius: 4px;
+             border: none;
+             color: #1e293b; /* Darker code text */
+        }
+         .results ul {
+             list-style: none;
+             padding-left: 0;
+         }
+         .results li {
+             padding: 12px 0;
+             border-bottom: 1px solid #e2e8f0;
+         }
+          .results li:last-child {
+             border-bottom: none;
+         }
+
+        hr { display: none; }
     </style>
 </head>
 <body>
     <h1>Swiss Army Knife Toolkit</h1>
 
-    <!-- Display General Errors -->
+    <!-- Back Button (Initially Hidden) -->
+    <button id="back-to-cards">← Back to Tools</button>
+
+    <!-- Display General Errors (Show above cards/tools if present) -->
     {% if error_message %}
         <p class="error">Error: {{ error_message }}</p>
     {% endif %}
 
+    <!-- Tool Selection Cards with Icons -->
+    <div id="tool-cards">
+        <div class="tool-card" data-tool="hash-tool">
+            <i class="fa-solid fa-hashtag"></i> <!-- Icon -->
+            <h3>Hash Generator</h3>
+            <p>Generate MD5, SHA1, SHA256 hashes.</p>
+        </div>
+        <div class="tool-card" data-tool="base64-tool">
+             <i class="fa-solid fa-grip-lines"></i> <!-- Icon (alternative: fa-code) -->
+            <h3>Base64 Encoder/Decoder</h3>
+            <p>Encode or decode Base64 strings.</p>
+        </div>
+        <div class="tool-card" data-tool="ip-geo-tool">
+             <i class="fa-solid fa-location-dot"></i> <!-- Icon -->
+            <h3>IP Geolocation</h3>
+            <p>Find geographic info for an IP.</p>
+        </div>
+        <div class="tool-card" data-tool="port-scan-tool">
+             <i class="fa-solid fa-network-wired"></i> <!-- Icon (alternative: fa-binoculars) -->
+            <h3>Port Scanner</h3>
+            <p>Check for open ports on a host.</p>
+        </div>
+    </div>
+
+    <!-- Tool Sections (HTML remains the same) -->
     <!-- Hash Tool Section -->
-    <div class="tool-section">
+    <div class="tool-section" id="hash-tool">
         <h2>Hash Generator</h2>
         <form method="post">
             {% csrf_token %}
+            <input type="hidden" name="active_tool" value="hash-tool">
             <label for="hash-input">Text to Hash:</label>
             <input type="text" id="hash-input" name="hash_input" placeholder="Enter text" value="{{ submitted_hash_input|default:'' }}">
             <button type="submit" name="action" value="hash">Generate Hashes</button>
@@ -44,10 +302,11 @@
     </div>
 
     <!-- Base64 Tool Section -->
-    <div class="tool-section">
+    <div class="tool-section" id="base64-tool">
         <h2>Base64 Encoder/Decoder</h2>
         <form method="post">
             {% csrf_token %}
+             <input type="hidden" name="active_tool" value="base64-tool">
             <label for="base64-input">Text to Encode/Decode:</label>
             <input type="text" id="base64-input" name="base64_input" placeholder="Enter text" value="{{ submitted_base64_input|default:'' }}">
             <label for="base64-action">Action:</label>
@@ -66,10 +325,11 @@
     </div>
 
     <!-- IP Geolocation Tool Section -->
-    <div class="tool-section">
+    <div class="tool-section" id="ip-geo-tool">
         <h2>IP Geolocation</h2>
         <form method="post">
             {% csrf_token %}
+             <input type="hidden" name="active_tool" value="ip-geo-tool">
             <label for="ip-geo-address">IP Address:</label>
             <input type="text" id="ip-geo-address" name="ip_geo_address" placeholder="e.g., 8.8.8.8" value="{{ submitted_ip_geo_input|default:'' }}">
             <button type="submit" name="action" value="geolocate">Get Geolocation</button>
@@ -78,7 +338,7 @@
              <div class="results">
                 <strong>Geolocation Information:</strong>
                 {% if geo_results.error %}
-                     <p>Could not retrieve geolocation: {{ geo_results.error }}</p>
+                     <p style="color: #991b1b;">Could not retrieve geolocation: {{ geo_results.error }}</p> <!-- Match error text color -->
                 {% else %}
                     <p><strong>IP Address:</strong> {{ geo_results.ip | default:"N/A" }}</p>
                     <p><strong>City:</strong> {{ geo_results.city | default:"N/A" }}</p>
@@ -87,17 +347,17 @@
                     <p><strong>Coordinates:</strong> {{ geo_results.loc | default:"N/A" }}</p>
                     <p><strong>ISP:</strong> {{ geo_results.org | default:"N/A" }}</p>
                     <p><strong>Timezone:</strong> {{ geo_results.timezone | default:"N/A" }}</p>
-                     <!-- Adjust fields based on your actual get_ip_geolocation output -->
                 {% endif %}
             </div>
         {% endif %}
     </div>
 
     <!-- Port Scanner Tool Section -->
-    <div class="tool-section">
+    <div class="tool-section" id="port-scan-tool">
         <h2>Port Scanner</h2>
         <form method="post">
             {% csrf_token %}
+             <input type="hidden" name="active_tool" value="port-scan-tool">
             <label for="port-scan-ip">IP Address or Hostname:</label>
             <input type="text" id="port-scan-ip" name="port_scan_ip" placeholder="e.g., 8.8.8.8 or scanme.nmap.org" value="{{ submitted_port_scan_ip|default:'' }}">
             <label for="port-scan-ports">Ports (comma-separated):</label>
@@ -107,18 +367,82 @@
          {% if show_port_results and port_scan_results is not None %}
              <div class="results">
                 <strong>Port Scan Results (for {{ submitted_port_scan_ip }}):</strong>
-                {% if port_scan_results %}
-                    <ul>
-                        {% for port in port_scan_results %}
-                            <li>Port {{ port }}: <strong style="color: green;">Open</strong></li>
-                        {% endfor %}
-                    </ul>
-                {% else %}
-                    <p>No open ports found in the scanned list.</p>
-                {% endif %}
+                 <ul>
+                     {% for port in port_scan_results %}
+                         <li>Port {{ port }}: <strong style="color: #16a34a;">Open</strong></li> <!-- Vibrant green -->
+                     {% empty %}
+                          <li>No open ports found in the scanned list.</li>
+                     {% endfor %}
+                 </ul>
             </div>
-        {% endif %}
+         {% endif %}
     </div>
+
+
+    <script>
+        // Javascript remains the same
+        document.addEventListener('DOMContentLoaded', () => {
+            const toolCardsContainer = document.getElementById('tool-cards');
+            const toolCards = document.querySelectorAll('.tool-card');
+            const toolSections = document.querySelectorAll('.tool-section');
+            const backButton = document.getElementById('back-to-cards');
+
+            function showTool(toolId) {
+                if (toolCardsContainer) {
+                    toolCardsContainer.style.display = 'none';
+                }
+                toolSections.forEach(section => {
+                    section.classList.remove('active-tool');
+                    section.style.display = 'none';
+                });
+                const activeSection = document.getElementById(toolId);
+                if (activeSection) {
+                    activeSection.classList.add('active-tool');
+                    activeSection.style.display = 'block';
+                     if (backButton) {
+                       backButton.style.display = 'inline-block';
+                     }
+                } else {
+                    console.error(`Tool section with id "${toolId}" not found.`);
+                    showCards();
+                }
+                 window.scrollTo(0, 0);
+            }
+
+            function showCards() {
+                toolSections.forEach(section => {
+                    section.classList.remove('active-tool');
+                     section.style.display = 'none';
+                });
+                if (backButton) {
+                    backButton.style.display = 'none';
+                }
+                 if (toolCardsContainer) {
+                    toolCardsContainer.style.display = 'grid';
+                 }
+            }
+
+            toolCards.forEach(card => {
+                card.addEventListener('click', () => {
+                    const toolId = card.getAttribute('data-tool');
+                    if (toolId) {
+                        showTool(toolId);
+                    }
+                });
+            });
+
+             if (backButton) {
+                backButton.addEventListener('click', showCards);
+             }
+
+            const initiallyActiveTool = "{{ active_tool_id|default:''|escapejs }}";
+            if (initiallyActiveTool) {
+                showTool(initiallyActiveTool);
+            } else {
+                showCards();
+            }
+        });
+    </script>
 
 </body>
 </html>
